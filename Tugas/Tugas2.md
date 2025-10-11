@@ -10,4 +10,4 @@ Tampilan Endpoint Update Book
 ![alt text](SS/Update.png)
 
 Tampilan Endpoint Delete Book
-![alt text](SS/delate.png)
+![alt text](SS/delete.png)
