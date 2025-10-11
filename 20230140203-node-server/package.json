@@ -13,6 +13,8 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "cors": "^2.8.5",
+    "exp": "^57.2.1",
     "express": "^5.1.0"
   }
 }
