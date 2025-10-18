@@ -9,3 +9,5 @@
 ![alt text](ss/ss-tugas3/checkout.png)
 ## check-out lebih dari sekali
 ![alt text](ss/ss-tugas3/checkout1.png)
+## report
+![alt text](ss/ss-tugas3/report.png)
