@@ -5,3 +5,4 @@ const router = express.Router();
  	router.get('/daily', [addUserData, isAdmin], reportController.getDailyReport);
  	module.exports = router;
 
+
