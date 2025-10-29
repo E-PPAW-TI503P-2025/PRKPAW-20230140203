@@ -9,4 +9,4 @@
 ## database setelah check-out
 ![alt text](SS/ss-tugas4/db.check-out.png)
 ## report
-![alt text](SS/ss-tugas4/report.png.png)
+![alt text](SS/ss-tugas4/report.png)
