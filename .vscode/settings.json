@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3380,
+            "driver": "MySQL",
+            "name": "diva",
+            "database": "praktikum_20230140203_db",
+            "username": "root",
+            "password": "diva1234"
+        }
+    ]
+}
