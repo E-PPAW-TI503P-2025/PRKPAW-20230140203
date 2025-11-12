@@ -9,6 +9,8 @@ const presensiRoutes = require("./routes/presensi");
 const reportRoutes = require("./routes/report");
 const authRoutes=require('./routes/auth');
 
+const db = require("./models");
+
 // Middleware
 app.use(cors());
 app.use(express.json());
