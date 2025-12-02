@@ -2,172 +2,170 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function PresensiPage() {
-  const navigate = useNavigate();
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+// Fix Leaflet Icon Issue
+const markerIcon = new L.Icon({
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
+function AttendancePage() {
+  const [coords, setCoords] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [coords, setCoords] = useState(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const navigate = useNavigate();
 
-  // 🔄 Update waktu setiap detik
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // 📍 Ambil lokasi pengguna
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCoords({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-          console.log("Lokasi berhasil didapatkan:", {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        (err) => {
-          console.error("Gagal mendapatkan lokasi:", err);
-          setError(
-            "Gagal mendapatkan lokasi. Pastikan GPS aktif dan izinkan akses lokasi."
-          );
-        }
-      );
-    } else {
-      setError("Geolocation tidak didukung oleh browser ini.");
-    }
-  }, []);
-
-  // 🔹 Handle Check-In
-  const handleCheckIn = async () => {
-    setError("");
-    setMessage("");
-
-    if (!coords) {
-      setError("Lokasi belum tersedia. Izinkan akses lokasi dan coba lagi.");
+  // ================== GET LOCATION ==================
+  const getLocation = () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation tidak didukung browser.");
       return;
     }
 
-    setLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCoords({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+      },
+      (err) => {
+        setError("Gagal mendapatkan lokasi: " + err.message);
+      }
+    );
+  };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+  // ================== CHECK IN ==================
+  const handleCheckIn = async () => {
     const token = localStorage.getItem("token");
+    if (!token) return navigate("/login");
+
+    if (!coords) {
+      setError("Lokasi belum siap. Mohon izinkan lokasi.");
+      return;
+    }
 
     try {
       const response = await axios.post(
         "http://localhost:3001/api/presensi/check-in",
-        { latitude: coords.lat, longitude: coords.lng },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          latitude: coords.lat,
+          longitude: coords.lng,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
-      console.log("Check-in berhasil:", response.data);
       setMessage(response.data.message);
+      setError("");
     } catch (err) {
-      console.error("Check-in error:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Check-in gagal");
-    } finally {
-      setLoading(false);
+      setError(
+        err.response ? err.response.data.message : "Gagal melakukan check-in"
+      );
+      setMessage("");
     }
   };
 
-  // 🔹 Handle Check-Out
+  // ================== CHECK OUT ==================
   const handleCheckOut = async () => {
-    setError("");
-    setMessage("");
-
-    if (!coords) {
-      setError("Lokasi belum tersedia. Izinkan akses lokasi dan coba lagi.");
-      return;
-    }
-
-    setLoading(true);
     const token = localStorage.getItem("token");
+    if (!token) return navigate("/login");
 
     try {
       const response = await axios.post(
         "http://localhost:3001/api/presensi/check-out",
-        { latitude: coords.lat, longitude: coords.lng },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
-      console.log("Check-out berhasil:", response.data);
       setMessage(response.data.message);
+      setError("");
     } catch (err) {
-      console.error("Check-out error:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Check-out gagal");
-    } finally {
-      setLoading(false);
+      setError(
+        err.response ? err.response.data.message : "Gagal melakukan check-out"
+      );
+      setMessage("");
     }
   };
 
-  // 🔹 Handle Logout
+  // ================== LOGOUT ==================
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    navigate("/");
+    navigate("/login");
   };
 
+  // ================== UI ==================
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#FCF5EE] via-[#FFC4C4] to-[#EE6983]">
-      <div className="bg-[rgb(252,245,238)]/95 p-8 rounded-2xl shadow-xl w-full max-w-md backdrop-blur-sm border border-[#FFC4C4]">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-[#850E35] mb-2">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#FCF5EE] via-[#FFC4C4] to-[#EE6983] p-4">
+      <div className="w-full max-w-md">
+        {/* ================== PETA DI ATAS ================== */}
+        {coords && (
+          <div className="mb-6 border rounded-lg overflow-hidden shadow-lg">
+            <MapContainer
+              center={[coords.lat, coords.lng]}
+              zoom={15}
+              style={{ height: "300px", width: "100%" }}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <Marker position={[coords.lat, coords.lng]} icon={markerIcon}>
+                <Popup>Lokasi Presensi Anda</Popup>
+              </Marker>
+            </MapContainer>
+          </div>
+        )}
+
+        {/* ================== CARD PRESENSI ================== */}
+        <div className="bg-[rgb(252,245,238)]/95 p-8 rounded-2xl shadow-xl border border-[#FFC4C4] mb-4 backdrop-blur-sm">
+          <h2 className="text-3xl font-bold text-[#850E35] mb-4 text-center">
             Presensi Mahasiswa
           </h2>
-          <p className="text-[#EE6983] font-medium">
-            {currentTime.toLocaleDateString("id-ID", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-          <p className="text-2xl font-bold text-[#850E35] mt-2">
-            {currentTime.toLocaleTimeString("id-ID")}
-          </p>
+
+          {message && <p className="text-green-500 mb-4 text-center">{message}</p>}
+          {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={handleCheckIn}
+              className="flex-1 py-3 px-4 bg-green-600 text-white font-semibold rounded-md shadow-sm hover:bg-green-700 transition"
+            >
+              Check-In
+            </button>
+            <button
+              onClick={handleCheckOut}
+              className="flex-1 py-3 px-4 bg-red-600 text-white font-semibold rounded-md shadow-sm hover:bg-red-700 transition"
+            >
+              Check-Out
+            </button>
+          </div>
         </div>
 
-        {message && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 text-center">
-            {message}
-          </div>
-        )}
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center">
-            {error}
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <button
-            onClick={handleCheckIn}
-            disabled={loading}
-            className="w-full py-4 px-4 bg-[#850E35] text-white font-bold rounded-xl shadow-lg hover:bg-[#600a26] hover:scale-105 transition transform duration-200 disabled:opacity-50 flex flex-col items-center"
-          >
-            {loading ? "..." : "check-in"}
-          </button>
-
-          <button
-            onClick={handleCheckOut}
-            disabled={loading}
-            className="w-full py-4 px-4 bg-[#EE6983] text-white font-bold rounded-xl shadow-lg hover:bg-[#d4566f] hover:scale-105 transition transform duration-200 disabled:opacity-50 flex flex-col items-center"
-          >
-            {loading ? "..." : "check-out"}
-          </button>
-        </div>
-
+        {/* ================== LOGOUT BUTTON ================== */}
         <button
           onClick={handleLogout}
-          className="w-full py-2 text-[#850E35] font-semibold hover:text-[#600a26] transition duration-200 text-sm"
+          className="w-full py-2 px-4 bg-[#850E35] text-white font-semibold rounded-md shadow-sm hover:bg-[#EE6983] transition duration-200 disabled:opacity-50"
         >
-          Logout / Keluar
+          Logout
         </button>
       </div>
     </div>
   );
 }
 
-export default PresensiPage;
+export default AttendancePage;

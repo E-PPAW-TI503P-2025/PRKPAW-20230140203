@@ -40,11 +40,10 @@ exports.addUserData = (req, res, next) => {
 
 exports.isAdmin = (req, res, next) => {
     if (req.user && req.user.role === 'admin') {
-        console.log('Access granted: Admin');
+        console.log('Middleware: Izin admin diberikan.');
         next();
     } else {
-        res.status(403).json({ 
-            message: 'Akses ditolak. Hanya admin yang dapat mengakses resource ini.' 
-        });
+        console.log('Middleware: Gagal! Pengguna bukan admin.');
+        return res.status(403).json({ message: 'Akses ditolak: Hanya untuk admin.' });
     }
 };

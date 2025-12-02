@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom'; // tambahkan Link
 
 function RegisterPage() {
-  const [nama, setNama] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("mahasiswa");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('mahasiswa');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -14,17 +15,16 @@ function RegisterPage() {
     e.preventDefault();
     setError(null);
     try {
-      await axios.post("http://localhost:3001/api/auth/register", {
-        nama,
+      const response = await axios.post('http://localhost:3001/api/auth/register', {
+        nama: name,
         email,
         password,
         role,
       });
-      navigate("/login");
+      alert(response.data.message || 'Registrasi Berhasil! Silakan Login.');
+      navigate('/login');
     } catch (err) {
-      setError(
-        err.response ? err.response.data.message : "Registrasi gagal!"
-      );
+      setError(err.response?.data?.message || 'Registrasi gagal. Server tidak merespons.');
     }
   };
 
@@ -39,8 +39,8 @@ function RegisterPage() {
           <input
             type="text"
             placeholder="Nama Lengkap"
-            value={nama}
-            onChange={(e) => setNama(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             required
             className="w-full px-4 py-2 border border-[#FFC4C4] bg-[rgb(252,245,238)] rounded-md focus:ring-2 focus:ring-[#EE6983] focus:border-[#EE6983] outline-none"
           />

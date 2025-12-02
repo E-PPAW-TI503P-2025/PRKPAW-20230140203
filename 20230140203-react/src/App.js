@@ -3,14 +3,14 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import DashboardPage from './components/DashboardPage';
-import PresensiPage from './components/PresensiPage';
-import ReportPage from './components/ReportAdmin';
+import ReportPage from './components/ReportPage';
 import MainLayout from './components/MainLayout'
+import AttendancePage from './components/PresensiPage';
 
 
 function AppContent() {
   const location = useLocation();
-  const hideNavbarPaths = ['/dashboard', '/presensi', '/report'];
+  const hideNavbarPaths = ['/dashboard', '/presensi', '/reports'];
   const shouldShowNavbar = !hideNavbarPaths.some(path => location.pathname.startsWith(path));
 
   return (
@@ -30,10 +30,10 @@ function AppContent() {
         
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/presensi" element={<PresensiPage />} />
+        <Route path="/presensi" element={<AttendancePage />} />
         <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/report" element={<ReportPage />} />
+            <Route path="/reports" element={<ReportPage />} />
         </Route>
         <Route path="/" element={<LoginPage />} />
       </Routes>
