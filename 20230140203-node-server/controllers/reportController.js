@@ -1,47 +1,24 @@
-//const presensiRecords = require("../data/presensiData");
 const { Presensi } = require("../models");
 const { Op } = require("sequelize");
-//exports.getDailyReport = (req, res) => {
-  //console.log("Controller: Mengambil data laporan harian dari array...");
-  //res.json({
-    //reportDate: new Date().toLocaleDateString(),
-    //data: presensiRecords,
-  //});
-//};
-
 exports.getDailyReport = async (req, res) => {
   try {
-    const { nama, checkIn, checkOut } = req.query;
+    const { nama } = req.query;
+    const { id: userId, role } = req.user;
+
     let options = { where: {} };
 
+    // Jika bukan admin, hanya bisa melihat data sendiri
+    if (role !== 'admin') {
+      options.where.userId = userId;
+    }
+
+    // Filter berdasarkan nama (jika ada)
+    // Note: User biasa tetap bisa filter nama, tapi hanya akan mencari di datanya sendiri (karena ada where.userId)
     if (nama) {
       options.where.nama = {
         [Op.like]: `%${nama}%`,
       };
     }
-    if (checkIn ) {
-      options.where.checkIn = {
-        [Op.between]: [checkIn],
-      };
-    }
-
-    if (checkIn) {
-      
-      const tanggalAwal = new Date(checkIn);
-      const tanggalAkhir = new Date(checkIn);
-      tanggalAkhir.setDate(tanggalAkhir.getDate() + 1);
-
-      options.where.checkIn = { [Op.between]: [tanggalAwal, tanggalAkhir] };
-    }
-
-    if (checkOut) {
-      const tanggalAwal = new Date(checkOut);
-      const tanggalAkhir = new Date(checkOut);
-      tanggalAkhir.setDate(tanggalAkhir.getDate() + 1);
-
-      options.where.checkOut = { [Op.between]: [tanggalAwal, tanggalAkhir] };
-    }
-
 
     const records = await Presensi.findAll(options);
 

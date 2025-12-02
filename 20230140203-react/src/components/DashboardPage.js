@@ -1,162 +1,71 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode"; // ✅ sesuai versi terbaru
-
 import {
-  HomeIcon,
-  ClipboardDocumentListIcon,
-  CalendarDaysIcon,
-  ChartBarIcon,
-  BanknotesIcon,
-  UserGroupIcon,
-  ArrowRightOnRectangleIcon,
-  MegaphoneIcon,
-  BellIcon,
   UserCircleIcon,
+  PresentationChartLineIcon,
+  ClockIcon,
+  ExclamationTriangleIcon
 } from "@heroicons/react/24/outline";
 
 function DashboardPage() {
-  const navigate = useNavigate();
-
-  // Ambil nama pengguna dari token JWT
-  let userName = "";
-  try {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const decoded = jwtDecode(token);
-      userName = decoded.nama || decoded.name || "Mahasiswa";
-    }
-  } catch (error) {
-    console.error("Gagal decode token:", error);
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+  // Tidak perlu logic User/Logout di sini lagi, sudah di MainLayout
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-r from-[#FCF5EE] via-[#FFC4C4] to-[#EE6983]">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white/20 backdrop-blur-md shadow-lg flex flex-col justify-between p-6">
-        <div>
-          <h1 className="text-2xl font-extrabold text-[#850E35] mb-10">
-            🎓
-          </h1>
-          <nav className="flex flex-col gap-4">
-            <button className="flex items-center gap-3 text-[#850E35] font-semibold hover:text-[#EE6983] transition">
-              <HomeIcon className="w-5 h-5" /> Dashboard
-            </button>
-            <button className="flex items-center gap-3 text-[#850E35] hover:text-[#EE6983] transition">
-              <ClipboardDocumentListIcon className="w-5 h-5" /> Presensi
-            </button>
-            <button className="flex items-center gap-3 text-[#850E35] hover:text-[#EE6983] transition">
-              <CalendarDaysIcon className="w-5 h-5" /> Jadwal Kuliah
-            </button>
-            <button className="flex items-center gap-3 text-[#850E35] hover:text-[#EE6983] transition">
-              <ChartBarIcon className="w-5 h-5" /> Nilai
-            </button>
-            <button className="flex items-center gap-3 text-[#850E35] hover:text-[#EE6983] transition">
-              <BanknotesIcon className="w-5 h-5" /> Pembayaran
-            </button>
-            <button className="flex items-center gap-3 text-[#850E35] hover:text-[#EE6983] transition">
-              <UserGroupIcon className="w-5 h-5" /> Dosen & Kelas
-            </button>
-            <button className="flex items-center gap-3 text-[#850E35] hover:text-[#EE6983] transition">
-              <MegaphoneIcon className="w-5 h-5" /> Pengumuman
-            </button>
-          </nav>
+    <div className="max-w-6xl mx-auto animate-fade-in-up">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            
+            {/* Card 1 */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <UserCircleIcon className="w-24 h-24 text-[#850E35]" />
+                </div>
+                <div className="relative z-10">
+                    <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center mb-4 text-[#850E35]">
+                        <UserCircleIcon className="w-6 h-6" />
+                    </div>
+                    <p className="text-gray-500 text-sm font-medium">Total Mahasiswa</p>
+                    <h4 className="text-4xl font-bold text-[#850E35] mt-1">120</h4>
+                    <div className="flex items-center gap-1 mt-4 text-green-500 text-sm font-medium">
+                        <PresentationChartLineIcon className="w-4 h-4" />
+                        <span>+5% bulan ini</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <ClockIcon className="w-24 h-24 text-[#EE6983]" />
+                </div>
+                <div className="relative z-10">
+                    <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mb-4 text-[#EE6983]">
+                        <ClockIcon className="w-6 h-6" />
+                    </div>
+                    <p className="text-gray-500 text-sm font-medium">Presensi Hari Ini</p>
+                    <h4 className="text-4xl font-bold text-[#850E35] mt-1">45</h4>
+                    <div className="mt-4 w-full bg-gray-100 rounded-full h-1.5">
+                        <div className="bg-[#EE6983] h-1.5 rounded-full" style={{ width: '45%' }}></div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-gradient-to-br from-[#850E35] to-[#a01d4a] p-6 rounded-2xl shadow-lg text-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                <div className="absolute -bottom-4 -right-4 opacity-20">
+                    <ExclamationTriangleIcon className="w-32 h-32 text-white" />
+                </div>
+                <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                            <ExclamationTriangleIcon className="w-6 h-6 text-white" />
+                        </div>
+                        <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">URGENT</span>
+                    </div>
+                    <p className="text-pink-200 text-sm font-medium">Belum Check-Out</p>
+                    <h4 className="text-4xl font-bold mt-1">12</h4>
+                    <p className="text-sm text-pink-200 mt-4 opacity-80">Mahasiswa belum check-out hari ini.</p>
+                </div>
+            </div>
         </div>
-
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 text-white bg-[#850E35] px-4 py-2 rounded-lg hover:bg-[#EE6983] transition"
-        >
-          <ArrowRightOnRectangleIcon className="w-5 h-5" />
-          Logout
-        </button>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-10 overflow-y-auto">
-        {/* Header */}
-        <header className="flex justify-between items-center mb-10">
-          <div>
-            <h2 className="text-3xl font-bold text-[#850E35]">
-              Selamat Datang, {userName} 👋
-            </h2>
-            <p className="text-[#EE6983]">
-              Berikut ringkasan aktivitas akademikmu hari ini.
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <BellIcon className="w-6 h-6 text-[#850E35] hover:text-[#EE6983] cursor-pointer transition" />
-            <UserCircleIcon className="w-9 h-9 text-[#850E35]" />
-          </div>
-        </header>
-
-        {/* Dashboard Cards */}
-        <section className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-[minmax(150px,_auto)]">
-          {/* Presensi */}
-          <div className="md:col-span-2 xl:col-span-2 bg-white/50 rounded-2xl shadow-lg p-6 border border-[#FFC4C4] hover:shadow-xl transition-all duration-300">
-            <h3 className="text-[#850E35] font-bold text-xl mb-2">📋 Presensi Hari Ini</h3>
-            <p className="text-[#850E35]/80 mb-3 text-sm">
-              Kamu telah hadir di <span className="font-semibold text-[#EE6983]">3</span> dari 4 kelas hari ini.
-            </p>
-            <button className="text-sm text-white bg-[#EE6983] px-4 py-2 rounded-md hover:bg-[#850E35] transition">
-              Lihat Detail Presensi
-            </button>
-          </div>
-
-          {/* Jadwal Kuliah */}
-          <div className="xl:col-span-1 bg-white/50 rounded-2xl shadow-lg p-6 border border-[#FFC4C4] hover:shadow-xl transition-all duration-300">
-            <h3 className="text-[#850E35] font-bold text-lg mb-2">📅 Jadwal Kuliah</h3>
-            <ul className="text-[#850E35]/80 text-sm space-y-1">
-              <li>08:00 - Algoritma & Pemrograman</li>
-              <li>10:00 - Struktur Data</li>
-              <li>13:00 - Basis Data</li>
-            </ul>
-          </div>
-
-          {/* Nilai */}
-          <div className="xl:col-span-1 bg-white/50 rounded-2xl shadow-lg p-6 border border-[#FFC4C4] hover:shadow-xl transition-all duration-300">
-            <h3 className="text-[#850E35] font-bold text-lg mb-2">📊 Nilai Semester Ini</h3>
-            <p className="text-[#850E35]/80 mb-3">
-              Rata-rata IPK sementara: <span className="font-semibold text-[#EE6983]">3.85</span>
-            </p>
-            <button className="text-sm text-white bg-[#EE6983] px-4 py-2 rounded-md hover:bg-[#850E35] transition">
-              Lihat Transkrip
-            </button>
-          </div>
-
-          {/* Pembayaran */}
-          <div className="bg-white/50 rounded-2xl shadow-lg p-6 border border-[#FFC4C4] hover:shadow-xl transition-all duration-300">
-            <h3 className="text-[#850E35] font-bold text-lg mb-2">💰 Status Pembayaran</h3>
-            <p className="text-[#850E35]/80 text-sm">
-              UKT Semester Ganjil: <span className="text-green-600 font-semibold">Lunas ✅</span>
-            </p>
-          </div>
-
-          {/* Pengumuman */}
-          <div className="md:col-span-2 xl:col-span-2 bg-white/50 rounded-2xl shadow-lg p-6 border border-[#FFC4C4] hover:shadow-xl transition-all duration-300">
-            <h3 className="text-[#850E35] font-bold text-lg mb-3">📢 Pengumuman Terbaru</h3>
-            <ul className="text-[#850E35]/80 text-sm space-y-2">
-              <li>📆 KRS dibuka tanggal 5 Desember.</li>
-              <li>🧾 UTS dimulai minggu depan.</li>
-              <li>🎯 Deadline tugas PBO: 15 November.</li>
-            </ul>
-          </div>
-
-          {/* Dosen & Kelas */}
-          <div className="xl:col-span-1 bg-white/50 rounded-2xl shadow-lg p-6 border border-[#FFC4C4] hover:shadow-xl transition-all duration-300">
-            <h3 className="text-[#850E35] font-bold text-lg mb-2">👩‍🏫 Dosen & Kelas</h3>
-            <p className="text-[#850E35]/80 text-sm">
-              Kamu tergabung dalam 5 mata kuliah aktif dengan 4 dosen pengampu.
-            </p>
-          </div>
-        </section>
-      </main>
     </div>
   );
 }

@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
+// Fungsi bantuan untuk membongkar (decode) isi Token JWT
+const parseJwt = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
+
 function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -24,16 +33,49 @@ function LoginPage() {
 
       const data = await response.json();
 
+      console.log("Data dari Server:", data); // Debugging
+
       if (response.ok) {
-        // login berhasil → simpan token
         localStorage.setItem("token", data.token);
-        navigate("/dashboard");
+
+        // 1. Coba cari role di body response (siapa tau ada)
+        let roleUser = data.role || (data.user && data.user.role);
+
+        // 2. Jika tidak ada di body, BONGKAR TOKEN-nya untuk cari role
+        if (!roleUser && data.token) {
+            const decodedToken = parseJwt(data.token);
+            console.log("Isi Token setelah didecode:", decodedToken); // LIHAT INI DI CONSOLE
+
+            if (decodedToken && decodedToken.role) {
+                roleUser = decodedToken.role;
+            } else {
+                 // Kadang role disimpan dengan nama lain di token, misal 'isAdmin' atau 'status'
+                 // Anda bisa cek log "Isi Token" untuk memastikan nama field-nya
+            }
+        }
+
+        if (roleUser) {
+            localStorage.setItem("role", roleUser);
+            const roleCheck = roleUser.toString().toLowerCase();
+
+            if (roleCheck === "admin") {
+                navigate("/dashboard");
+            } else if (roleCheck === "mahasiswa") {
+                navigate("/presensi");
+            } else {
+                setError(`Role ditemukan ("${roleUser}"), tapi tidak dikenali sistem.`);
+            }
+        } else {
+            console.error("Gagal menemukan role di Response Body maupun di dalam Token.");
+            setError("Login berhasil, tapi sistem tidak bisa menentukan status Role Anda.");
+        }
+
       } else {
-        // login gagal → tampilkan error dari backend
         setError(data.message || "Email atau password salah");
       }
     } catch (err) {
-      setError("Terjadi kesalahan server, coba lagi nanti");
+      console.error("Fetch Error:", err);
+      setError("Gagal menghubungi server.");
     } finally {
       setLoading(false);
     }
@@ -48,10 +90,7 @@ function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-[#850E35]"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-[#850E35]">
               Email
             </label>
             <input
@@ -65,10 +104,7 @@ function LoginPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-[#850E35]"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-[#850E35]">
               Password
             </label>
             <input
@@ -91,9 +127,10 @@ function LoginPage() {
         </form>
 
         {error && (
-          <p className="text-[rgb(133,14,53)] text-sm mt-4 text-center font-medium">
-            {error}
-          </p>
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4 text-center text-sm">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{error}</span>
+          </div>
         )}
 
         <p className="text-center text-sm text-[#850E35] mt-6">

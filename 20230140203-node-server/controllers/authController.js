@@ -1,34 +1,26 @@
 const { User } = require('../models');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-
+const jwt = require('jsonwebtoken');	
 const JWT_SECRET = 'INI_ADALAH_KUNCI_RAHASIA_ANDA_YANG_SANGAT_AMAN';
 
 exports.register = async (req, res) => {
   try {
     const { nama, email, password, role } = req.body;
-    //validasi input dasar
+
     if (!nama || !email || !password) {
-      return res.status(400).json({ 
-        message: "Nama, email, dan password harus diisi"
-     });
+      return res.status(400).json({ message: "Nama, email, dan password harus diisi" });
     }
 
     if (role && !['mahasiswa', 'admin'].includes(role)) {
-      return res.status(400).json({
-         message: "Role tidak valid. Harus 'mahasiswa' atau 'admin'."
-      });
+      return res.status(400).json({ message: "Role tidak valid. Harus 'mahasiswa' atau 'admin'." });
     }
 
-    //hash password menggunakaan bcrypt
     const hashedPassword = await bcrypt.hash(password, 10); 
-
-    //untuk create 
     const newUser = await User.create({
       nama,
       email,
       password: hashedPassword,
-      role: role || 'mahasiswa' //jika role tidak dikirim maka defult mahasiswa
+      role: role || 'mahasiswa' 
     });
 
     res.status(201).json({
@@ -44,18 +36,16 @@ exports.register = async (req, res) => {
   }
 };
 
-//FUNGSI LOGIN
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    //CARI USER BERDASARKAN EMAIL
     const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(404).json({ message: "Email tidak ditemukan." });
     }
 
-    
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Password salah." });
@@ -67,7 +57,6 @@ exports.login = async (req, res) => {
       role: user.role 
     };
 
-    //buat dapet ttd jwt
     const token = jwt.sign(payload, JWT_SECRET, {
       expiresIn: '1h' 
     });
