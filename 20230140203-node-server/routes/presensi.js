@@ -3,19 +3,15 @@ const { body } = require('express-validator');
 const router = express.Router();
 
 const presensiController = require('../controllers/presensiController');
-const { verifyToken } = require('../middleware/authMiddleware'); // <-- pakai JWT, bukan dummy!
+const { authenticateToken } = require('../middleware/authMiddleware');
 
-// Endpoint check-in dan check-out
-router.post('/check-in', verifyToken, presensiController.CheckIn);
-router.post('/check-out', verifyToken, presensiController.CheckOut);
+router.post('/check-in', authenticateToken, presensiController.CheckIn);
+router.post('/check-out', authenticateToken, presensiController.CheckOut);
+router.delete('/:id', authenticateToken, presensiController.deletePresensi);
 
-// Endpoint hapus data presensi
-router.delete('/:id', verifyToken, presensiController.deletePresensi);
-
-// Endpoint update dengan validasi format tanggal
 router.put(
   '/:id',
-  verifyToken,
+  authenticateToken,
   [
     body('checkIn')
       .optional()
@@ -29,7 +25,6 @@ router.put(
   presensiController.updatePresensi
 );
 
-// Search
-router.get('/search', verifyToken, presensiController.searchByTanggal);
+router.get('/search', authenticateToken, presensiController.searchByTanggal);
 
 module.exports = router;

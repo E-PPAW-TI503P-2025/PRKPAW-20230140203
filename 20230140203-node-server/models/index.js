@@ -40,16 +40,4 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-// ... kode load model lainnya ...
-
-// Definisikan Hubungan (Kabel Penghubung)
-db.User.hasMany(db.Presensi, { 
-    foreignKey: 'userId', // Pastikan kolom ini ada di tabel Presensi
-    as: 'presensis' 
-});
-
-db.Presensi.belongsTo(db.User, { 
-    foreignKey: 'userId', // Kolom penghubung di tabel Presensi
-    as: 'user' // Alias pemanggil
-});
 module.exports = db;
