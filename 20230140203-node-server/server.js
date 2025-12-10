@@ -3,6 +3,9 @@ const cors = require("cors");
 const app = express();
 const PORT = 3001;
 const morgan = require("morgan");
+const path = require("path");
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // Impor router
 const presensiRoutes = require("./routes/presensi");
@@ -13,6 +16,7 @@ const reportsRouter = require("./routes/reports");
 
 const db = require("./models");
 
+app.use(express.static(path.join(__dirname, "public")));
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -34,6 +38,7 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/reports", reportsRouter);
+
 
 app.listen(PORT, () => {
   console.log(`Express server running at http://localhost:${PORT}/`);
