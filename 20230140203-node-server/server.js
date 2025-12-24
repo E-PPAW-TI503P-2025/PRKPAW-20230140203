@@ -39,6 +39,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/reports", reportsRouter);
 
+const iotRoutes = require('./routes/iot');
+
+app.use(express.json());
+app.use("/api/iot", iotRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`Express server running at http://localhost:${PORT}/`);
