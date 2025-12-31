@@ -6,6 +6,8 @@ import DashboardPage from './components/DashboardPage';
 import ReportPage from './components/ReportPage';
 import MainLayout from './components/MainLayout'
 import AttendancePage from './components/PresensiPage';
+import SensorPage from './components/DashboardIoT';
+
 
 
 function AppContent() {
@@ -34,6 +36,7 @@ function AppContent() {
         <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/reports" element={<ReportPage />} />
+            <Route path="/monitoring" element={<SensorPage />} />
         </Route>
         <Route path="/" element={<LoginPage />} />
       </Routes>

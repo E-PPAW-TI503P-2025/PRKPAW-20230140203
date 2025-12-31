@@ -33,6 +33,8 @@ function Navbar() {
         Presensi
       </Link>
 
+      <Link to="/monitoring" className="...">Monitoring Suhu</Link>
+
       {user?.role === "admin" && (
         <Link className="hover:text-gray-400" to="/reports">
           Laporan Admin

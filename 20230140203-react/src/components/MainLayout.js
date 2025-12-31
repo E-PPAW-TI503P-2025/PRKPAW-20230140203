@@ -80,6 +80,18 @@ function MainLayout() {
               <BanknotesIcon className={`w-6 h-6 transition-transform duration-300 ${isActive("/reports") ? "scale-110" : "group-hover:scale-110"}`} /> 
               Laporan Presensi
             </Link>
+
+            <Link
+              to="/monitoring"
+              className={`flex items-center gap-4 px-4 py-3.5 rounded-xl font-medium transition-all duration-300 group ${
+                isActive("/monitoring")
+                ? "bg-[#850E35] text-white shadow-lg shadow-pink-200 translate-x-1"
+                : "text-gray-500 hover:bg-pink-50 hover:text-[#850E35]"
+              }`}
+            >
+              <BellIcon className={`w-6 h-6 transition-transform duration-300 ${isActive("/monitoring") ? "scale-110" : "group-hover:scale-110"}`} /> 
+              Monitoring Suhu
+            </Link>
           </nav>
         </div>
 
